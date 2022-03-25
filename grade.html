@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<meta charset="UTF-8">
+
+<link rel="stylesheet" href="./bootstrap-3.3.4/dist/css/bootstrap.min.css" />
+<link rel="stylesheet" href="./Flat-UI-master/dist/css/flat-ui.min.css" />
+<script src="./Flat-UI-master/dist/js/vendor/jquery.min.js"></script>
+<script src="./bootstrap-3.3.4/dist/js/bootstrap.min.js"></script>
+<script src="./Flat-UI-master/dist/js/flat-ui.min.js"></script>
+<script src="./js/math.js"></script>
+<script src="./js/vue.js"></script>
+<script src="./js/vue.min.js"></script>
+<script src="./js/echarts.js"></script>
+<script src="./js/jQuery-1.12.4.js"></script>
+<title></title>
+<style>
+	.row {
+		margin-left: 20px;
+		margin-right: 20px;
+	}
+
+	.line-center {
+		line-height: 50px;
+		text-align: center;
+	}
+
+	.row input {
+		width: 100px;
+	}
+
+	.show {
+		visibility: visible;
+	}
+
+	.hid {
+		visibility: hidden;
+	}
+
+	.hidd {
+		display: none;
+	}
+
+	.col-center-block {
+		float: none;
+		display: block;
+		margin-left: auto;
+		margin-right: auto;
+	}
+
+	body {
+		height: 650px;
+	}
+</style>
+</head>
+
+<body>
+	<div class="navbar navbar-default navbar-static-top" role="navigation">
+		<div class="container">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+				</button>
+				<div class="navbar-brand">历史成绩</div>
+			</div>
+			<div class="navbar-collapse collapse">
+				<ul class="nav navbar-nav">
+					<li class="active"><a href="./Caculator.html">返回做题页面</a></li>
+				</ul>
+				<ul class="nav navbar-nav navbar-right hidden-sm">
+					<li>
+						<a href="./Login_v1/index.html">退出登录</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<!--content-->
+	<div class="container" id="app">
+		<div class="row thumbnail center">
+			<div class="col-sm-12">
+				<h4 class="text-center" style="margin-bottom: 30px">历史成绩柱状图</h4>
+				<div id="main" style="width: 800px;height:400px;" class="col-center-block"></div>
+			</div>
+		</div>
+	</div>
+</body>
+<script type="text/javascript">
+	// 基于准备好的dom，初始化echarts实例
+	var myChart = echarts.init(document.getElementById('main'));
+	
+
+	jQuery.ajax(
+		{
+			url: `http://localhost:9090/system/job/queryAll?page=1&&size=3`,
+			method: 'get',
+			success(res) {
+				// console.log(res);
+				let list = JSON.parse(res).data.list;
+				list = list.sort(function(a,b){
+					if(a.pro < b.pro){
+						return -1
+					}else if(a.pro > b.pro){
+						return 1
+					}else{
+						return 0
+					}
+				})
+				console.log(list)
+				let xData = [];
+				let yData = [];
+				for(let i = 0; i < list.length; i ++){
+					let str = '第' + list[i].pro + '次';
+					xData.push(str);
+					yData.push(list[i].score);
+				}
+				console.log(xData)
+
+				myChart.setOption({
+					title: {
+						text: '历史成绩柱状图'
+					},
+					tooltip: {},
+					legend: {
+						data: ['分数']
+					},
+					xAxis: {
+						data: xData
+					},
+					yAxis: {},
+					series: [
+						{
+							name: '分数',
+							type: 'bar',
+							data: yData
+						}
+					]
+				});
+				// myChart.showLoading();
+				
+			
+				
+			},
+
+		}
+	)
+</script>
+
+</html>

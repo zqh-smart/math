@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html>
+<meta charset="UTF-8">
+
+<link rel="stylesheet" href="./bootstrap-3.3.4/dist/css/bootstrap.min.css" />
+<link rel="stylesheet" href="./Flat-UI-master/dist/css/flat-ui.min.css" />
+<script src="./Flat-UI-master/dist/js/vendor/jquery.min.js"></script>
+<script src="./bootstrap-3.3.4/dist/js/bootstrap.min.js"></script>
+<script src="./Flat-UI-master/dist/js/flat-ui.min.js"></script>
+<script src="./js/math.js"></script>
+<script src="./js/vue.js"></script>
+<script src="./js/vue.min.js"></script>
+<title></title>
+<style>
+	.row {
+		margin-left: 20px;
+		margin-right: 20px;
+	}
+
+	.line-center {
+		line-height: 50px;
+		text-align: center;
+	}
+
+	.row input {
+		width: 100px;
+	}
+
+	.show {
+		visibility: visible;
+	}
+
+	.hid {
+		visibility: hidden;
+	}
+
+	.hidd {
+		display: none;
+	}
+
+	#div1 {
+		width: 200px;
+		height: 50px;
+		margin: 0px auto;
+		text-align: center;
+		margin-bottom: 0px;
+	}
+
+	#count {
+		width: 200px;
+		height: 50px;
+		line-height: 50px;
+	}
+</style>
+</head>
+
+<body>
+	<div class="navbar navbar-default navbar-static-top" role="navigation">
+		<div class="container">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+				</button>
+				<div class="navbar-brand">欢迎使用</div>
+			</div>
+			<div class="navbar-collapse collapse">
+				<ul class="nav navbar-nav">
+					<li class="active"><a href="./grade.html">历史成绩</a></li>
+				</ul>
+				<ul class="nav navbar-nav navbar-right hidden-sm">
+					<li>
+						<a href="./Login_v1/index.html">退出登录</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<!--content-->
+	<div class="container" id="app">
+		<div class="row thumbnail center">
+			<div class="col-sm-12">
+				<h3 class="text-center" style="margin-bottom: 30px">小学四则运算</h3>
+				<h5 class="text-center">(除法保留两位小数)</h5>
+				<div class="text-center">做题用时：
+					<div id="div1">
+						<div id="count">
+							<span id="id_H">00</span><span>:</span>
+							<span id="id_M">00</span><span>:</span>
+							<span id="id_S">00</span>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class=" list-group">
+				<div class="col-sm-12 thumbnail">
+					<div class="col-sm-2 line-center">题号</div>
+					<div class="col-sm-2 line-center">题目</div>
+					<div class="col-sm-3 line-center">你的答案</div>
+					<div class="col-sm-3 line-center">正确答案</div>
+					<div class="col-sm-2 line-center">得分</div>
+				</div>
+				<div class="col-sm-12  list-group-item">
+					<div v-for="(item, index) in arr">
+						<div class="col-sm-2 line-center">
+							{{item.title}}
+						</div>
+						<div class="col-sm-2 line-center">
+							{{item.question}}
+						</div>
+						<div class="col-sm-3 line-center">
+							<input type="text" class="small" v-model="item.your" />
+						</div>
+						<div class="col-sm-3 line-center hid" :id="step(index)">
+							{{item.result}}
+						</div>
+						<div class="col-sm-2 line-center hid" :id="scor(index)">
+							{{item.score}}
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-12 thumbnail">
+					<div class=" col-sm-offset-4 col-sm-3 text-right"></div>
+					<div class="col-sm-3 text-right">总分：</div>
+					<div class="col-sm-2">
+						{{total}}
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-offset-7 col-sm-5" style="padding: 30px;">
+				<div class="col-sm-3 btn btn-success btn-block" @click="load()" id="start">开始做题</div>
+				<div class="col-sm-3 btn btn-success btn-block hidd" @click="reload()" id="continue">继续做题</div>
+				<div class="col-sm-3 btn btn-success btn-block" @click="submit()" id="pause">提交</div>
+			</div>
+		</div>
+	</div>
+
+	<!--footer-->
+	<div class="navbar navbar-default navbar-static-bottom">
+		版权声明区：布布酱酱糊
+	</div>
+
+	<script>
+		// var ques;
+		var app = new Vue({
+			el: "#app",
+			data: {
+				// isSubmit: false,
+				arr: [],
+				total: 0,
+				isSubmit: true,
+				num: 8
+			},
+			// mounted() {
+			// this.test()
+			// },
+			methods: {
+				load() {
+					this.isSubmit = false;
+					this.arr = [];
+					for (let i = 0; i < 20; i++) {
+						const {
+							question,
+							result
+						} = CreateQuestion();
+						this.arr.push({
+							title: i + 1,
+							question,
+							your: '',
+							result,
+							score: 0,
+						})
+					}
+
+				},
+				reload() {
+					this.isSubmit = false;
+					this.total = 0;
+					this.num = app.num+1;
+					alert("已为您重新加载题目")
+					this.arr = [];
+					for (let i = 0; i < 20; i++) {
+						const {
+							question,
+							result
+						} = CreateQuestion();
+						this.arr.push({
+							title: i + 1,
+							question,
+							your: '',
+							result,
+							score: 0,
+						})
+						hiddiv(this.step(i));
+						hiddiv(this.scor(i));
+					}
+				},
+
+				CalScore() {
+					for (let i = 0; i < this.arr.length; i++) {
+						if (this.arr[i].your === this.arr[i].result + '') {
+							this.arr[i].score = 5;
+							this.total = this.total + 5;
+						}
+					}
+				},
+				submit() {
+					if(this.isSubmit){
+						return;
+					}
+					this.isSubmit = true;
+					this.CalScore();
+					for (let i = 0; i < this.arr.length; i++) {
+						showdiv(this.step(i));
+						showdiv(this.scor(i));
+					}
+					document.getElementById("continue").style.display = "block";
+					document.getElementById("start").style.display = "none";
+					console.log(JSON.parse(localStorage.getItem('user')).userInfo.username);
+					let username = JSON.parse(localStorage.getItem('user')).userInfo.username;
+					let score = app.total;
+                    let id=JSON.parse(localStorage.getItem('user')).userInfo.id;
+					let pro=app.num;
+					jQuery.ajax(
+						{
+							url: `http://localhost:9090/system/job/insert?id=${id}&username=${username}&gradepass=${score}&score=${score}&pro=${pro}`,
+							method: 'post',
+							success(res) {
+								// console.log(res);
+								console.log(res)
+								
+							},
+
+						}
+					)
+					// this.total = 0;
+				},
+				step: function (i) {
+					return "step" + i;
+				},
+				scor: function (i) {
+					return "scor" + i;
+				}
+			}
+		})
+
+
+		function showdiv(i) {
+			document.getElementById(i).style.visibility = "visible";
+			document.getElementById(i).style.visibility = "visible";
+		}
+
+		function hiddiv(i) {
+			document.getElementById(i).style.visibility = "hidden";
+			document.getElementById(i).style.visibility = "hidden";
+		}
+	</script>
+
+	<script>
+		// 可以将查找标签节点的操作进行简化
+		function $(id) {
+			return document.getElementById(id);
+		}
+		window.onload = function () {
+			var count = 0; //开始计数以后，累加的总秒数
+			var timer = null;
+			$("start").onclick = function () {
+				clearInterval(timer);
+				timer = setInterval(function () {// 如果在这个位置写var，相当于timer是这个start点击事件定义的一个变量，在其他点击事件中不能使用
+					count++;
+					// 需要改变页面上的时分秒数
+					$("id_S").innerHTML = showNum(count % 60);
+					$("id_M").innerHTML = showNum(parseInt(count / 60) % 60);
+					$("id_H").innerHTML = showNum(parseInt(count / 3600));
+				}, 1000);
+			}
+			$("pause").onclick = function () {
+				// 取消定时器
+				clearInterval(timer);
+			}
+			$("continue").onclick = function () {
+				clearInterval(timer);
+				// 将数据清零
+				count = 0;
+				// 将当前页面展示数据清零
+				$("id_S").innerHTML = "00"
+				$("id_M").innerHTML = "00"
+				$("id_H").innerHTML = "00"
+
+				clearInterval(timer);
+				timer = setInterval(function () {// 如果在这个位置写var，相当于timer是这个start点击事件定义的一个变量，在其他点击事件中不能使用
+					count++;
+					// 需要改变页面上的时分秒数
+					$("id_S").innerHTML = showNum(count % 60);
+					$("id_M").innerHTML = showNum(parseInt(count / 60) % 60);
+					$("id_H").innerHTML = showNum(parseInt(count / 3600));
+				}, 1000);
+			}
+		}
+		// 处理单个数字
+		function showNum(num) {
+			if (num < 10) {
+				return "0" + num;
+			} else {
+				return num;
+			}
+		}
+					//提交数据
+
+	</script>
+</body>
+
+</html>
